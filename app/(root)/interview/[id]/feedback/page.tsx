@@ -22,8 +22,13 @@ const Feedback = async ({ params }: RouteParams) => {
         userId: user?.id!,
     });
 
-    // categoryScores is already an array per Feedback type
-    const categoryScoresArray = feedback?.categoryScores ?? [];
+    // categoryScores may be an object map; normalize to array for rendering
+    const categoryScoresArray = Array.isArray(feedback?.categoryScores)
+        ? feedback?.categoryScores
+        : Object.entries(feedback?.categoryScores ?? {}).map(([name, score]) => ({
+              name,
+              score,
+          }));
 
 
 
