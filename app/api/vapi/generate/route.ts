@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
-import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
 import { db } from "@/firebase/admin";
 import { getRandomInterviewCover } from "@/lib/utils";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 export async function GET() {
@@ -67,15 +67,14 @@ Return STRICT JSON like:
 
   try {
     // --------------------------------------------
-    // 🔥 Call OpenAI
+    // 🔥 Call Gemini
     // --------------------------------------------
-    const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.2,
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
     });
 
-    const text = response.choices[0].message?.content ?? "";
+    const text = response.text ?? "";
 
     // --------------------------------------------
     // 🔍 Parse JSON safely
